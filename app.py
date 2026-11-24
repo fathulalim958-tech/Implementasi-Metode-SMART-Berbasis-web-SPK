@@ -576,29 +576,25 @@ with r1_col1:
                 st.warning("Semua kolom harus diisi.")
                 
     with tbl_alt_col:
-        h1, h2, h3, h4 = st.columns([0.8, 1.2, 3.2, 0.9])
-        h1.markdown("<span style='font-size:0.8rem; font-weight:700; color:#475569;'>No</span>", unsafe_allow_html=True)
-        h2.markdown("<span style='font-size:0.8rem; font-weight:700; color:#475569;'>Kode</span>", unsafe_allow_html=True)
-        h3.markdown("<span style='font-size:0.8rem; font-weight:700; color:#475569;'>Nama Alternatif</span>", unsafe_allow_html=True)
-        h4.markdown("<span style='font-size:0.8rem; font-weight:700; color:#475569;'>Aksi</span>", unsafe_allow_html=True)
-        st.markdown("<hr style='margin: 4px 0 8px 0; border: none; border-top: 1px solid #E2E8F0;'/>", unsafe_allow_html=True)
-        
-        del_alt_idx = None
+        alt_rows_html = ""
         for i, alt in enumerate(st.session_state.alternatives):
-            c1, c2, c3, c4 = st.columns([0.8, 1.2, 3.2, 0.9])
-            c1.markdown(f"<div class='cell-text'>{i+1}</div>", unsafe_allow_html=True)
-            c2.markdown(f"<div class='cell-text' style='font-weight:600;'>{alt['Kode']}</div>", unsafe_allow_html=True)
-            c3.markdown(f"<div class='cell-text'>{alt['Nama Alternatif']}</div>", unsafe_allow_html=True)
-            with c4:
-                st.markdown("<div class='delete-btn'>", unsafe_allow_html=True)
-                if st.button("🗑️", key=f"del_alt_{alt['Kode']}_{i}", help="Hapus Alternatif"):
-                    del_alt_idx = i
-                st.markdown("</div>", unsafe_allow_html=True)
-                
-        if del_alt_idx is not None:
+            alt_rows_html += f"<tr><td>{i+1}</td><td style='font-weight:600;'>{alt['Kode']}</td><td>{alt['Nama Alternatif']}</td></tr>"
+        st.markdown(clean_html(f"""
+        <table class="custom-table">
+            <thead>
+                <tr><th>No</th><th>Kode</th><th>Nama Alternatif</th></tr>
+            </thead>
+            <tbody>{alt_rows_html}</tbody>
+        </table>
+        """), unsafe_allow_html=True)
+
+        alt_options = [f"{a['Kode']} - {a['Nama Alternatif']}" for a in st.session_state.alternatives]
+        sel_del_alt = st.selectbox("Pilih alternatif untuk dihapus", alt_options, key="sel_del_alt", label_visibility="collapsed")
+        if st.button("🗑️ Hapus Alternatif Terpilih", key="btn_del_alt_sel", use_container_width=True):
             if len(st.session_state.alternatives) <= 2:
                 st.error("Minimal harus terdapat 2 alternatif.")
             else:
+                del_alt_idx = alt_options.index(sel_del_alt)
                 removed_code = st.session_state.alternatives[del_alt_idx]["Kode"]
                 st.session_state.alternatives.pop(del_alt_idx)
                 if removed_code in st.session_state.matrix_data:
@@ -647,31 +643,25 @@ with r1_col2:
                 st.warning("Semua kolom harus diisi.")
                 
     with tbl_crit_col:
-        k1, k2, k3, k4, k5 = st.columns([0.7, 1.0, 2.2, 1.5, 0.8])
-        k1.markdown("<span style='font-size:0.8rem; font-weight:700; color:#475569;'>No</span>", unsafe_allow_html=True)
-        k2.markdown("<span style='font-size:0.8rem; font-weight:700; color:#475569;'>Kode</span>", unsafe_allow_html=True)
-        k3.markdown("<span style='font-size:0.8rem; font-weight:700; color:#475569;'>Nama Kriteria</span>", unsafe_allow_html=True)
-        k4.markdown("<span style='font-size:0.8rem; font-weight:700; color:#475569;'>Jenis</span>", unsafe_allow_html=True)
-        k5.markdown("<span style='font-size:0.8rem; font-weight:700; color:#475569;'>Aksi</span>", unsafe_allow_html=True)
-        st.markdown("<hr style='margin: 4px 0 8px 0; border: none; border-top: 1px solid #E2E8F0;'/>", unsafe_allow_html=True)
-        
-        del_crit_idx = None
+        crit_rows_html = ""
         for i, crit in enumerate(st.session_state.criteria):
-            c1, c2, c3, c4, c5 = st.columns([0.7, 1.0, 2.2, 1.5, 0.8])
-            c1.markdown(f"<div class='cell-text'>{i+1}</div>", unsafe_allow_html=True)
-            c2.markdown(f"<div class='cell-text' style='font-weight:600;'>{crit['Kode']}</div>", unsafe_allow_html=True)
-            c3.markdown(f"<div class='cell-text'>{crit['Nama Kriteria']}</div>", unsafe_allow_html=True)
-            c4.markdown(f"<div class='cell-text'>{crit['Jenis']}</div>", unsafe_allow_html=True)
-            with c5:
-                st.markdown("<div class='delete-btn'>", unsafe_allow_html=True)
-                if st.button("🗑️", key=f"del_crit_{crit['Kode']}_{i}", help="Hapus Kriteria"):
-                    del_crit_idx = i
-                st.markdown("</div>", unsafe_allow_html=True)
-                
-        if del_crit_idx is not None:
+            crit_rows_html += f"<tr><td>{i+1}</td><td style='font-weight:600;'>{crit['Kode']}</td><td>{crit['Nama Kriteria']}</td><td>{crit['Jenis']}</td></tr>"
+        st.markdown(clean_html(f"""
+        <table class="custom-table">
+            <thead>
+                <tr><th>No</th><th>Kode</th><th>Nama Kriteria</th><th>Jenis</th></tr>
+            </thead>
+            <tbody>{crit_rows_html}</tbody>
+        </table>
+        """), unsafe_allow_html=True)
+
+        crit_options = [f"{c['Kode']} - {c['Nama Kriteria']}" for c in st.session_state.criteria]
+        sel_del_crit = st.selectbox("Pilih kriteria untuk dihapus", crit_options, key="sel_del_crit", label_visibility="collapsed")
+        if st.button("🗑️ Hapus Kriteria Terpilih", key="btn_del_crit_sel", use_container_width=True):
             if len(st.session_state.criteria) <= 1:
                 st.error("Minimal harus terdapat 1 kriteria.")
             else:
+                del_crit_idx = crit_options.index(sel_del_crit)
                 removed_crit = st.session_state.criteria[del_crit_idx]["Kode"]
                 st.session_state.criteria.pop(del_crit_idx)
                 for alt_code in st.session_state.matrix_data:
