@@ -492,6 +492,8 @@ st.markdown(clean_html("""
         <div class="header-icon-box">⚖️</div>
         <div>
             <h1 class="header-title-text">Sistem Pendukung Keputusan</h1>
+            <p class="header-subtitle-text">06TPLP002</p>
+            <p class="header-subtitle-text">KELOMPOK 1</p>
             <p class="header-subtitle-text">Metode SMART (Simple Multi-Attribute Rating Technique)</p>
         </div>
     </div>
